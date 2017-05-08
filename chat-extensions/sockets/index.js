@@ -6,39 +6,39 @@
  */
 
 // ===== SOCKETS ===============================================================
-import ListSocket from './list-socket';
+import PortfolioSocket from './portfolio-socket';
 import UserSocket from './user-socket';
 
-const socketUsers = new Map(); // {socketId: {userId, listId}}
+const socketUsers = new Map(); // {socketId: {userId, portfolioId}}
 
 export default function attachSockets(io) {
-  io.on('connection', (socket) => {
-    const allInRoom = (roomId) => io.sockets.in(roomId);
-    const userSocket = io.sockets.connected[socket.id];
+    io.on('connection', (socket) => {
+        const allInRoom = (roomId) => io.sockets.in(roomId);
+        const userSocket = io.sockets.connected[socket.id];
 
-    const channel = (channel, handler) => {
-      socket.on(channel, (request, sendStatus) => {
-        const {userId, listId} = socketUsers.get(socket.id) || {};
+        const channel = (channel, handler) => {
+            socket.on(channel, (request, sendStatus) => {
+                const { userId, portfolioId } = socketUsers.get(socket.id) || {};
 
-        handler({
-          allInRoom,
-          listId,
-          request,
-          sendStatus,
-          socket,
-          socketUsers,
-          userId,
-          userSocket,
-        });
-      });
-    };
+                handler({
+                    allInRoom,
+                    portfolioId,
+                    request,
+                    sendStatus,
+                    socket,
+                    socketUsers,
+                    userId,
+                    userSocket,
+                });
+            });
+        };
 
-    console.log(`A user connected (socket ID ${socket.id})`);
+        console.log(`A user connected (socket ID ${socket.id})`);
 
-    channel('disconnect', UserSocket.leave);
-    channel('push:item:add', ListSocket.addItem);
-    channel('push:item:update', ListSocket.updateItem);
-    channel('push:title:update', ListSocket.updateTitle);
-    channel('push:user:join', UserSocket.join);
-  });
+        channel('disconnect', UserSocket.leave);
+        channel('push:item:add', PortfolioSocket.addItem);
+        channel('push:item:update', PortfolioSocket.updateItem);
+        channel('push:title:update', PortfolioSocket.updateTitle);
+        channel('push:user:join', UserSocket.join);
+    });
 }

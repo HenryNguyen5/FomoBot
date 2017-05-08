@@ -6,34 +6,34 @@
  */
 
 module.exports = {
-  test: {
-    client: 'pg',
-    connection: 'postgres://localhost/list_bot_test',
-    migrations: {
-      directory: `${__dirname}/db/migrations`,
+    test: {
+        client: 'pg',
+        connection: 'postgres://localhost/portfolio_bot_test',
+        migrations: {
+            directory: `${__dirname}/db/migrations`,
+        },
+        seeds: {
+            directory: `${__dirname}/db/seeds/test`,
+        },
     },
-    seeds: {
-      directory: `${__dirname}/db/seeds/test`,
+    development: {
+        client: 'pg',
+        connection: 'postgres://localhost/portfolio_bot_dev',
+        migrations: {
+            directory: `${__dirname}/db/migrations`,
+        },
+        seeds: {
+            directory: `${__dirname}/db/seeds/development`,
+        },
     },
-  },
-  development: {
-    client: 'pg',
-    connection: 'postgres://localhost/list_bot_dev',
-    migrations: {
-      directory: `${__dirname}/db/migrations`,
+    production: {
+        client: 'pg',
+        connection: `${process.env.DATABASE_URL}?ssl=true`,
+        migrations: {
+            directory: `${__dirname}/db/migrations`,
+        },
+        seeds: {
+            directory: `${__dirname}/db/seeds/production`,
+        },
     },
-    seeds: {
-      directory: `${__dirname}/db/seeds/development`,
-    },
-  },
-  production: {
-    client: 'pg',
-    connection: `${process.env.DATABASE_URL}?ssl=true`,
-    migrations: {
-      directory: `${__dirname}/db/migrations`,
-    },
-    seeds: {
-      directory: `${__dirname}/db/seeds/production`,
-    },
-  },
 };

@@ -16,39 +16,39 @@
  */
 
 /**
- * Button for opening a specific list in a webview
+ * Button for opening a specific portfolio in a webview
  *
- * @param {string} listUrl - URL for a specific list.
+ * @param {string} portfolioUrl - URL for a specific portfolio.
  * @param {string} buttonText - Text for the action button.
  * @returns {object} -
- *   Message to create a button pointing to the list in a webview.
+ *   Message to create a button pointing to the portfolio in a webview.
  */
-const openExistingListButton = (listUrl, buttonText = 'Edit List') => {
-  return {
-    type: 'web_url',
-    title: buttonText,
-    url: listUrl,
-    messenger_extensions: true,
-    webview_height_ratio: 'tall',
-  };
+const openExistingPortfolioButton = (portfolioUrl, buttonText = 'Edit portfolio') => {
+    return {
+        type: 'web_url',
+        title: buttonText,
+        url: portfolioUrl,
+        messenger_extensions: true,
+        webview_height_ratio: 'tall',
+    };
 };
 
 /**
- * Button for opening a new list in a webview
+ * Button for opening a new portfolio in a webview
  *
  * @param {string} apiUri - Hostname of the server.
  * @param {string=} buttonTitle - Button title.
  * @returns {object} -
- *   Message to create a button pointing to the new list form.
+ *   Message to create a button pointing to the new portfolio form.
  */
-const createListButton = (apiUri, buttonTitle = 'Create a List') => {
-  return {
-    type: 'web_url',
-    url: `${apiUri}/lists/new`,
-    title: buttonTitle,
-    webview_height_ratio: 'tall',
-    messenger_extensions: true,
-  };
+const createPortfolioButton = (apiUri, buttonTitle = 'Create a portfolio') => {
+    return {
+        type: 'web_url',
+        url: `${apiUri}/portfolios/new`,
+        title: buttonTitle,
+        webview_height_ratio: 'tall',
+        messenger_extensions: true,
+    };
 };
 
 /*
@@ -62,160 +62,158 @@ const createListButton = (apiUri, buttonTitle = 'Create a List') => {
  * Message that welcomes the user to the bot
  *
  * @param {string} apiUri - Hostname of the server.
- * @returns {object} - Message with welcome text and a button to start a new list.
+ * @returns {object} - Message with welcome text and a button to start a new portfolio.
  */
 const welcomeMessage = (apiUri) => {
-  return {
-    attachment: {
-      type: 'template',
-      payload: {
-        template_type: 'button',
-        text: 'Ready to make a shared list with your friends? Everyone can add items, check things off, and stay in sync.',
-        buttons: [
-          createListButton(apiUri),
-        ],
-      },
-    },
-  };
+    return {
+        attachment: {
+            type: 'template',
+            payload: {
+                template_type: 'button',
+                text: 'Ready to make a shared portfolio with your friends? Everyone can add items, check things off, and stay in sync.',
+                buttons: [
+                    createPortfolioButton(apiUri),
+                ],
+            },
+        },
+    };
 };
 
 /**
- * Message for when the user has no lists yet.
+ * Message for when the user has no portfolios yet.
  *
  * @param {string} apiUri - Hostname of the server.
- * @returns {object} - Message with welcome text and a button to start a new list.
+ * @returns {object} - Message with welcome text and a button to start a new portfolio.
  */
-const noListsMessage = (apiUri) => {
-  return {
-    attachment: {
-      type: 'template',
-      payload: {
-        template_type: 'button',
-        text: 'It looks like you don’t have any lists yet. Would you like to create one?',
-        buttons: [
-          createListButton(apiUri),
-        ],
-      },
-    },
-  };
+const noPortfoliosMessage = (apiUri) => {
+    return {
+        attachment: {
+            type: 'template',
+            payload: {
+                template_type: 'button',
+                text: 'It looks like you don’t have any portfolios yet. Would you like to create one?',
+                buttons: [
+                    createPortfolioButton(apiUri),
+                ],
+            },
+        },
+    };
 };
 
 /**
- * Helper to construct a URI for the desired list
+ * Helper to construct a URI for the desired portfolio
  *
  * @param {string} apiUri -
  *   Base URI for the server.
  *   Because this moduele may be called from the front end, we need to pass it explicitely.
- * @param {int} listId - The list ID.
- * @returns {string} - URI for the required list.
+ * @param {int} portfolioId - The portfolio ID.
+ * @returns {string} - URI for the required portfolio.
  */
-const listUrl = (apiUri, listId) => `${apiUri}/lists/${listId}`;
+const portfolioUrl = (apiUri, portfolioId) => `${apiUri}/portfolios/${portfolioId}`;
 
 /**
- * A single list for the list template.
- * The name here is to distinguish lists and list templates.
+ * A single portfolio for the portfolio template.
+ * The name here is to distinguish portfolios and portfolio templates.
  *
- * @param {string} id            - List ID.
+ * @param {string} id            - portfolio ID.
  * @param {string} apiUri        - Url of endpoint.
  * @param {string} subscriberIds - Ids of each subscriber.
- * @param {string} title         - List title.
- * @returns {object} - Message with welcome text and a button to start a new list.
+ * @param {string} title         - portfolio title.
+ * @returns {object} - Message with welcome text and a button to start a new portfolio.
  */
-const listElement = ({id, subscriberIds, title}, apiUri) => {
-  return {
-    title: title,
-    subtitle: `Shared with ${[...subscriberIds].length} people`,
-    default_action: {
-      type: 'web_url',
-      url: listUrl(apiUri, id),
-      messenger_extensions: true,
-      webview_height_ratio: 'tall',
-    },
-  };
+const portfolioElement = ({ id, subscriberIds, title }, apiUri) => {
+    return {
+        title: title,
+        subtitle: `Shared with ${[...subscriberIds].length} people`,
+        default_action: {
+            type: 'web_url',
+            url: portfolioUrl(apiUri, id),
+            messenger_extensions: true,
+            webview_height_ratio: 'tall',
+        },
+    };
 };
 
 /**
- * Messages for a list template of lists (meta!), offset by how many
+ * Messages for a portfolio template of portfolios (meta!), offset by how many
  * "read mores" the user has been through
  *
  * @param {string} apiUri - Hostname of the server.
  * @param {string} action - The postback action
- * @param {Array.<Object>} lists - All of the lists to be (eventually) displayed.
- * @param {int=} offset - How far through the list we are so far.
- * @returns {object} - Message with welcome text and a button to start a new list.
+ * @param {Array.<Object>} portfolios - All of the portfolios to be (eventually) displayed.
+ * @param {int=} offset - How far through the portfolio we are so far.
+ * @returns {object} - Message with welcome text and a button to start a new portfolio.
  */
-const paginatedListsMessage = (apiUri, action, lists, offset = 0) => {
-  const pageLists = lists.slice(offset, offset + 4);
+const paginatedPortfoliosMessage = (apiUri, action, portfolios, offset = 0) => {
+    const pageportfolios = portfolios.slice(offset, offset + 4);
 
-  let buttons;
-  if (lists.length > (offset + 4)) {
-    buttons = [
-      {
-        title: 'View More',
-        type: 'postback',
-        payload: `${action}_OFFSET_${offset + 4}`,
-      },
-    ];
-  }
+    let buttons;
+    if (portfolios.length > (offset + 4)) {
+        buttons = [{
+            title: 'View More',
+            type: 'postback',
+            payload: `${action}_OFFSET_${offset + 4}`,
+        }, ];
+    }
 
-  return {
-    attachment: {
-      type: 'template',
-      payload: {
-        template_type: 'list',
-        top_element_style: 'compact',
-        elements: pageLists.map((list) => listElement(list, apiUri)),
-        buttons,
-      },
-    },
-  };
+    return {
+        attachment: {
+            type: 'template',
+            payload: {
+                template_type: 'portfolio',
+                top_element_style: 'compact',
+                elements: pageportfolios.map((portfolio) => portfolioElement(portfolio, apiUri)),
+                buttons,
+            },
+        },
+    };
 };
 
 /**
- * Message that informs the user that their list has been created.
+ * Message that informs the user that their portfolio has been created.
  */
-const listCreatedMessage = {
-  text: 'Your list was created.',
+const portfolioCreatedMessage = {
+    text: 'Your portfolio was created.',
 };
 
 /**
  * Message to configure the customized sharing menu in the webview
  *
  * @param {string} apiUri - Application basename
- * @param {string} listId - The ID for list to be shared
- * @param {string} title - Title of the list
+ * @param {string} portfolioId - The ID for portfolio to be shared
+ * @param {string} title - Title of the portfolio
  * @param {string} buttonText - Text for the action button.
  * @returns {object} - Message to configure the customized sharing menu.
  */
-const shareListMessage = (apiUri, listId, title, buttonText) => {
-  const urlToList = listUrl(apiUri, listId);
-  console.log({urlToList});
-  return {
-    attachment: {
-      type: 'template',
-      payload: {
-        template_type: 'generic',
-        elements: [{
-          title: title,
-          image_url: `${apiUri}/media/button-cover.png`,
-          subtitle: 'A shared list from Tasks',
-          default_action: {
-            type: 'web_url',
-            url: urlToList,
-            messenger_extensions: true,
-          },
-          buttons: [openExistingListButton(urlToList, buttonText)],
-        }],
-      },
-    },
-  };
+const sharePortfolioMessage = (apiUri, portfolioId, title, buttonText) => {
+    const urlToPortfolio = portfolioUrl(apiUri, portfolioId);
+    console.log({ urlToPortfolio });
+    return {
+        attachment: {
+            type: 'template',
+            payload: {
+                template_type: 'generic',
+                elements: [{
+                    title: title,
+                    image_url: `${apiUri}/media/button-cover.png`,
+                    subtitle: 'A shared portfolio from Tasks',
+                    default_action: {
+                        type: 'web_url',
+                        url: urlToPortfolio,
+                        messenger_extensions: true,
+                    },
+                    buttons: [openExistingPortfolioButton(urlToPortfolio, buttonText)],
+                }],
+            },
+        },
+    };
 };
 
 export default {
-  welcomeMessage,
-  listCreatedMessage,
-  paginatedListsMessage,
-  createListButton,
-  noListsMessage,
-  shareListMessage,
+    welcomeMessage,
+    portfolioCreatedMessage,
+    paginatedPortfoliosMessage,
+    createPortfolioButton,
+    noPortfoliosMessage,
+    sharePortfolioMessage,
 };

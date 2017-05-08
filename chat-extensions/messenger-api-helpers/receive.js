@@ -9,32 +9,32 @@
 import sendApi from './send';
 
 // ===== MODELS ================================================================
-import Lists from '../models/lists';
+import Portfolios from '../models/portfolios';
 
 /**
- * sendSharedLists - Gets & Sends a list of all lists a user owns.
+ * sendSharedLists - Gets & Sends a list of all portfolios a user owns.
  * @param   {Number} senderId - FB ID to send to.
  * @param   {String} type - Postback Action type to respond to.
  * @returns {Undefined} - .
  */
 const sendOwnedLists = (senderId, type) => {
-  Lists.getOwnedForUser(senderId)
-    .then((lists) => {
-      sendApi.sendLists(senderId, type, lists, Number(type.substring(19)));
-    });
+    Portfolios.getOwnedForUser(senderId)
+        .then((lists) => {
+            sendApi.sendLists(senderId, type, lists, Number(type.substring(19)));
+        });
 };
 
 /**
- * sendSharedLists - Gets & Sends a list of all lists a user is associated with.
+ * sendSharedLists - Gets & Sends a list of all portfolios a user is associated with.
  * @param   {Number} senderId - FB ID to send to.
  * @param   {String} type - Action type to send.
  * @returns {Undefined} - .
  */
 const sendSharedLists = (senderId, type) => {
-  Lists.getSharedToUser(senderId)
-    .then((lists) => {
-      sendApi.sendLists(senderId, type, lists, Number(type.substring(22)));
-    });
+    Portfolios.getSharedToUser(senderId)
+        .then((lists) => {
+            sendApi.sendLists(senderId, type, lists, Number(type.substring(22)));
+        });
 };
 
 /*
@@ -43,29 +43,29 @@ const sendSharedLists = (senderId, type) => {
  * developers.facebook.com/docs/messenger-platform/webhook-reference/postback
  */
 const handleReceivePostback = (event) => {
-  /**
-   * The 'payload' param is a developer-defined field which is
-   * set in a postbackbutton for Structured Messages.
-   *
-   * In this case we've defined our payload in our postback
-   * actions to be a string that represents a JSON object
-   * containing `type` and `data` properties. EG:
-   */
-  const type = event.postback.payload;
-  const senderId = event.sender.id;
+    /**
+     * The 'payload' param is a developer-defined field which is
+     * set in a postbackbutton for Structured Messages.
+     *
+     * In this case we've defined our payload in our postback
+     * actions to be a string that represents a JSON object
+     * containing `type` and `data` properties. EG:
+     */
+    const type = event.postback.payload;
+    const senderId = event.sender.id;
 
-  // Perform an action based on the type of payload received.
-  if (type.substring(0, 11) === 'owned_lists') {
-    sendOwnedLists(senderId, type);
-  } else if (type.substring(0, 16) === 'subscribed_lists') {
-    sendSharedLists(senderId, type);
-  } else if (type.substring(0, 11) === 'get_started') {
-    sendApi.sendWelcomeMessage(senderId);
-    return;
-  }
-  // eslint-enable camelcase
+    // Perform an action based on the type of payload received.
+    if (type.substring(0, 11) === 'owned_lists') {
+        sendOwnedLists(senderId, type);
+    } else if (type.substring(0, 16) === 'subscribed_lists') {
+        sendSharedLists(senderId, type);
+    } else if (type.substring(0, 11) === 'get_started') {
+        sendApi.sendWelcomeMessage(senderId);
+        return;
+    }
+    // eslint-enable camelcase
 
-  sendApi.sendMessage(senderId, `Unknown Postback called: ${type}`);
+    sendApi.sendMessage(senderId, `Unknown Postback called: ${type}`);
 };
 
 /*
@@ -75,18 +75,18 @@ const handleReceivePostback = (event) => {
  * docs/messenger-platform/webhook-reference/message-received
  */
 const handleReceiveMessage = (event) => {
-  const message = event.message;
-  const senderId = event.sender.id;
+    const message = event.message;
+    const senderId = event.sender.id;
 
-  // It's good practice to send the user a read receipt so they know
-  // the bot has seen the message. This can prevent a user
-  // spamming the bot if the requests take some time to return.
-  sendApi.sendReadReceipt(senderId);
+    // It's good practice to send the user a read receipt so they know
+    // the bot has seen the message. This can prevent a user
+    // spamming the bot if the requests take some time to return.
+    sendApi.sendReadReceipt(senderId);
 
-  if (message.text) { sendApi.sendWelcomeMessage(senderId); }
+    if (message.text) { sendApi.sendWelcomeMessage(senderId); }
 };
 
 export default {
-  handleReceivePostback,
-  handleReceiveMessage,
+    handleReceivePostback,
+    handleReceiveMessage,
 };
