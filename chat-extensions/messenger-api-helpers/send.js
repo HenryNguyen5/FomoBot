@@ -12,122 +12,121 @@ import castArray from 'lodash/castArray';
 import messages from './messages';
 import api from './api';
 
-const {APP_URL} = process.env;
+const { APP_URL } = process.env;
 
 // Turns typing indicator on.
 const typingOn = (recipientId) => {
-  return {
-    recipient: {
-      id: recipientId,
-    },
-    sender_action: 'typing_on', // eslint-disable-line camelcase
-  };
+    return {
+        recipient: {
+            id: recipientId,
+        },
+        sender_action: 'typing_on', // eslint-disable-line camelcase
+    };
 };
 
 // Turns typing indicator off.
 const typingOff = (recipientId) => {
-  return {
-    recipient: {
-      id: recipientId,
-    },
-    sender_action: 'typing_off', // eslint-disable-line camelcase
-  };
+    return {
+        recipient: {
+            id: recipientId,
+        },
+        sender_action: 'typing_off', // eslint-disable-line camelcase
+    };
 };
 
 // Wraps a message JSON object with recipient information.
 const messageToJSON = (recipientId, messagePayload) => {
-  return {
-    recipient: {
-      id: recipientId,
-    },
-    message: messagePayload,
-  };
+    return {
+        recipient: {
+            id: recipientId,
+        },
+        message: messagePayload,
+    };
 };
 
 // Send one or more messages using the Send API.
 const sendMessage = (recipientId, messagePayloads) => {
-  const messagePayloadArray = castArray(messagePayloads)
-    .map((messagePayload) => messageToJSON(recipientId, messagePayload));
+    const messagePayloadArray = castArray(messagePayloads)
+        .map((messagePayload) => messageToJSON(recipientId, messagePayload));
 
-  api.callMessagesAPI([
-    typingOn(recipientId),
-    ...messagePayloadArray,
-    typingOff(recipientId),
-  ]);
+    api.callMessagesAPI([
+        typingOn(recipientId),
+        ...messagePayloadArray,
+        typingOff(recipientId),
+    ]);
 };
 
 // Send a read receipt to indicate the message has been read
 const sendReadReceipt = (recipientId) => {
-  const messageData = {
-    recipient: {
-      id: recipientId,
-    },
-    sender_action: 'mark_seen', // eslint-disable-line camelcase
-  };
+    const messageData = {
+        recipient: {
+            id: recipientId,
+        },
+        sender_action: 'mark_seen', // eslint-disable-line camelcase
+    };
 
-  api.callMessagesAPI(messageData);
+    api.callMessagesAPI(messageData);
 };
 
 // Send the initial message welcoming & describing the bot.
 const sendWelcomeMessage = (recipientId) => {
-  sendMessage(recipientId, messages.welcomeMessage(APP_URL));
+    sendMessage(recipientId, messages.welcomeMessage(APP_URL));
 };
 
-// Let the user know that they don't have any lists yet.
-const sendNoListsYet = (recipientId) => {
-  sendMessage(recipientId, messages.noListsMessage(APP_URL));
+// Let the user know that they don't have any portfolios yet.
+const sendNoPortfoliosYet = (recipientId) => {
+    sendMessage(recipientId, messages.noPortfoliosMessage(APP_URL));
 };
 
-// Show user the lists they are associated with.
-const sendLists = (recipientId, action, lists, offset) => {
-  // Show different responses based on number of lists.
-  switch (lists.length) {
-  case 0:
-    // Tell User they have no lists.
-    sendNoListsYet(recipientId);
-    break;
-  case 1:
-    // Show a single list — List view templates require
-    // a minimum of 2 Elements. Rease More at:
-    // https://developers.facebook.com/docs/
-    // messenger-platform/send-api-reference/list-template
-    const {id, title} = lists[0];
+// Show user the portfolios they are associated with.
+const sendPortfolios = (recipientId, action, portfolios, offset) => {
+    // Show different responses based on number of portfolios.
+    switch (portfolios.length) {
+        case 0:
+            // Tell User they have no portfolios.
+            sendNoPortfoliosYet(recipientId);
+            break;
+        case 1:
+            // Show a single portfolio — Portfolio view templates require
+            // a minimum of 2 Elements. Rease More at:
+            // https://developers.facebook.com/docs/
+            // messenger-platform/send-api-reference/portfolio-template
+            const { id, title } = portfolios[0];
 
+            sendMessage(
+                recipientId,
+                messages.sharePortfolioMessage(APP_URL, id, title, 'Open Portfolio'),
+            );
+
+            break;
+        default:
+            // Show a paginated set of portfolios — Portfolio view templates require
+            // a maximum of 4 Elements. Rease More at:
+            // https://developers.facebook.com/docs/
+            // messenger-platform/send-api-reference/portfolio-template
+            sendMessage(
+                recipientId,
+                messages.paginatedPortfoliosMessage(APP_URL, action, portfolios, offset)
+            );
+
+            break;
+    }
+};
+
+// Send a message notifying the user their portfolio has been created.
+const sendPortfolioCreated = (recipientId, portfolioId, title) => {
     sendMessage(
-      recipientId,
-      messages.shareListMessage(APP_URL, id, title, 'Open List'),
-    );
-
-    break;
-  default:
-    // Show a paginated set of lists — List view templates require
-    // a maximum of 4 Elements. Rease More at:
-    // https://developers.facebook.com/docs/
-    // messenger-platform/send-api-reference/list-template
-    sendMessage(
-      recipientId,
-      messages.paginatedListsMessage(APP_URL, action, lists, offset)
-    );
-
-    break;
-  }
-};
-
-// Send a message notifying the user their list has been created.
-const sendListCreated = (recipientId, listId, title) => {
-  sendMessage(
-    recipientId,
-    [
-      messages.listCreatedMessage,
-      messages.shareListMessage(APP_URL, listId, title, 'Open List'),
-    ]);
+        recipientId, [
+            messages.portfolioCreatedMessage,
+            messages.sharePortfolioMessage(APP_URL, portfolioId, title, 'Open Portfolio'),
+        ]);
 };
 
 export default {
-  sendListCreated,
-  sendLists,
-  sendMessage,
-  sendNoListsYet,
-  sendReadReceipt,
-  sendWelcomeMessage,
+    sendPortfolioCreated,
+    sendPortfolios,
+    sendMessage,
+    sendNoPortfoliosYet,
+    sendReadReceipt,
+    sendWelcomeMessage,
 };

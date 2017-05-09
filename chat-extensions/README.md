@@ -143,8 +143,8 @@ before you commit and push your changes.
 You may want to run this bot on a platform outside of Heroku or simply have it available locally for testing purposes.
 ```bash
 $ cd path/to/repo/chat-extensions
-$ createdb list_bot_dev
-$ createdb list_bot_test
+$ createdb portfolio_bot_dev
+$ createdb portfolio_bot_test
 $ yarn install
 $ knex migrate:latest
 $ knex seed:run

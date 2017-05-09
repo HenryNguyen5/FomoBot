@@ -13,7 +13,7 @@ import Knex from '../db/knex';
 import { camelCaseKeys } from './util';
 
 const Portfolios = () => Knex('portfolios');
-const PortfoliosItems = () => Knex('portfolios_items');
+const Currencies = () => Knex('currencies');
 const Users = () => Knex('users');
 const UsersPortfolios = () => Knex('users_portfolios');
 
@@ -37,15 +37,15 @@ const getAll = () =>
     .then((portfolios) => portfolios.map(camelCaseKeys));
 
 /**
- * getAllItems - Gets all portfoliosItems for the portfolio with the given ID.
+ * getAllItems - Gets all currencies for the portfolio with the given ID.
  * @param   {Number} portfolioId - The ID of the portfolio to get items for.
- * @returns {Array} portfoliosItems - Array of all portfoliosItems
+ * @returns {Array} currencies - Array of all currencies
  */
 const getAllItems = (portfolioId) =>
-    PortfoliosItems()
+    Currencies()
     .where('portfolio_id', parseInt(portfolioId, 10))
     .select()
-    .then((portfoliosItems) => portfoliosItems.map(camelCaseKeys));
+    .then((currencies) => currencies.map(camelCaseKeys));
 
 /**
  * getAllUsers - Gets all Users of the portfolio with the given ID.
@@ -184,7 +184,7 @@ const setOwner = (portfolioId, userFbId) =>
  * @returns {Object} portfolio - The updated portfolio.
  */
 const setTitle = (newTitle = '', portfolioId) => {
-    const title = (newTitle === null) ? 'Shopping portfolio' : newTitle;
+    const title = (newTitle === null) ? 'BTC portfolio' : newTitle;
 
     return Portfolios()
         .where('id', parseInt(portfolioId, 10)).update({ title }, ['id', 'title'])
@@ -196,7 +196,7 @@ const setTitle = (newTitle = '', portfolioId) => {
  * @param   {String} title - The title of the portfolio to create.
  * @returns {Object} portfolio - The newly created portfolio.
  */
-const create = (title = 'Shopping portfolio') =>
+const create = (title = 'BTC portfolio') =>
     Portfolios()
     .insert({ title }, 'id').then(get);
 

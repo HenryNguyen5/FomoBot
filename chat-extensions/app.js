@@ -13,14 +13,14 @@ import favicon from 'serve-favicon';
 import logger from 'morgan';
 import path from 'path';
 import SocketServer from 'socket.io';
-import {Server} from 'http';
+import { Server } from 'http';
 
 // ===== MESSENGER =============================================================
 import ThreadSetup from './messenger-api-helpers/thread-setup';
 
 // ===== ROUTES ================================================================
 import index from './routes/index';
-import lists from './routes/lists';
+import portfolios from './routes/portfolios';
 import webhooks from './routes/webhooks';
 
 // ===== SOCKETS ===============================================================
@@ -52,7 +52,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // eslint-disable-line
 /* ----------  Parsers  ---------- */
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 /* ----------  Loggers &c  ---------- */
@@ -67,15 +67,15 @@ app.use(logger('dev'));
 
 // Sockets
 export const server = Server(app);
-const io = new SocketServer(server, {pingInterval: 2000, pingTimeout: 5000});
+const io = new SocketServer(server, { pingInterval: 2000, pingTimeout: 5000 });
 
 attachSockets(io);
 
 /* ----------  Sockets Hooks  ---------- */
 
 app.use(function(req, res, next) {
-  res.io = io;
-  next();
+    res.io = io;
+    next();
 });
 
 /* =============================================
@@ -85,26 +85,26 @@ app.use(function(req, res, next) {
 /* ----------  Primary / Happy Path  ---------- */
 
 app.use('/', index);
-app.use('/lists', lists);
+app.use('/portfolios', portfolios);
 app.use('/webhook', webhooks);
 
 /* ----------  Errors  ---------- */
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    const err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 app.use((err, req, res) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 /**
@@ -112,10 +112,10 @@ app.use((err, req, res) => {
  * will print stacktrace
  */
 if (app.get('env') === 'development') {
-  app.use((err, req, res) => {
-    res.status(err.status || 500);
-    new Error(err); // eslint-disable-line no-new
-  });
+    app.use((err, req, res) => {
+        res.status(err.status || 500);
+        new Error(err); // eslint-disable-line no-new
+    });
 }
 
 /**
@@ -123,11 +123,11 @@ if (app.get('env') === 'development') {
  * no stacktraces leaked to user
  */
 app.use((err, req, res) => {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {},
-  });
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {},
+    });
 });
 
 /* =============================================

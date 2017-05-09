@@ -12,28 +12,28 @@ import sendApi from './send';
 import Portfolios from '../models/portfolios';
 
 /**
- * sendSharedLists - Gets & Sends a list of all portfolios a user owns.
+ * sendSharedPortfolios - Gets & Sends a list of all portfolios a user owns.
  * @param   {Number} senderId - FB ID to send to.
  * @param   {String} type - Postback Action type to respond to.
  * @returns {Undefined} - .
  */
-const sendOwnedLists = (senderId, type) => {
+const sendOwnedPortfolios = (senderId, type) => {
     Portfolios.getOwnedForUser(senderId)
-        .then((lists) => {
-            sendApi.sendLists(senderId, type, lists, Number(type.substring(19)));
+        .then((portfolios) => {
+            sendApi.sendPortfolios(senderId, type, portfolios, Number(type.substring(19)));
         });
 };
 
 /**
- * sendSharedLists - Gets & Sends a list of all portfolios a user is associated with.
+ * sendSharedPortfolios - Gets & Sends a list of all portfolios a user is associated with.
  * @param   {Number} senderId - FB ID to send to.
  * @param   {String} type - Action type to send.
  * @returns {Undefined} - .
  */
-const sendSharedLists = (senderId, type) => {
+const sendSharedPortfolios = (senderId, type) => {
     Portfolios.getSharedToUser(senderId)
-        .then((lists) => {
-            sendApi.sendLists(senderId, type, lists, Number(type.substring(22)));
+        .then((portfolios) => {
+            sendApi.sendPortfolios(senderId, type, portfolios, Number(type.substring(22)));
         });
 };
 
@@ -55,10 +55,10 @@ const handleReceivePostback = (event) => {
     const senderId = event.sender.id;
 
     // Perform an action based on the type of payload received.
-    if (type.substring(0, 11) === 'owned_lists') {
-        sendOwnedLists(senderId, type);
-    } else if (type.substring(0, 16) === 'subscribed_lists') {
-        sendSharedLists(senderId, type);
+    if (type.substring(0, 11) === 'owned_portfolios') {
+        sendOwnedPortfolios(senderId, type);
+    } else if (type.substring(0, 16) === 'subscribed_portfolios') {
+        sendSharedPortfolios(senderId, type);
     } else if (type.substring(0, 11) === 'get_started') {
         sendApi.sendWelcomeMessage(senderId);
         return;

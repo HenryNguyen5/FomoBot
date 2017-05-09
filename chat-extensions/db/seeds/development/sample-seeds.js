@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const { getPortfoliosItems, getUsersPortfolios, PORTFOLIOS, USERS } =
+const { getCurrencies, getUsersPortfolios, PORTFOLIOS, USERS } =
 require('../sample-seed-helpers');
 
 /**
@@ -15,7 +15,7 @@ require('../sample-seed-helpers');
 exports.seed = (knex, Promise) =>
     Promise.all([
         knex('users_portfolios').del(),
-        knex('portfolios_items').del(),
+        knex('currencies').del(),
         knex('portfolios').del(),
         knex('users').del(),
     ]).then(() =>
@@ -27,7 +27,7 @@ exports.seed = (knex, Promise) =>
 
             return Promise.all([
                 knex('users_portfolios').insert(getUsersPortfolios(portfolioIds)),
-                knex('portfolios_items').insert(getPortfoliosItems(portfolioIds)),
+                knex('currencies').insert(getCurrencies(portfolioIds)),
             ]);
         })
     );

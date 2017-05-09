@@ -5,29 +5,29 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const {getListsItems, getUsersLists, LISTS, USERS} =
-  require('../sample-seed-helpers');
+const { getCurrencies, getUsersPortfolios, PORTFOLIOS, USERS } =
+require('../sample-seed-helpers');
 
 /**
  * Test ENV Seed File - When run with `knex seed:run`, populates
  *                      database with placeholder data.
  */
 exports.seed = (knex, Promise) =>
-  Promise.all([
-    knex('users_lists').del(),
-    knex('lists_items').del(),
-    knex('lists').del(),
-    knex('users').del(),
-  ]).then(() =>
     Promise.all([
-      knex('lists').insert(LISTS, 'id'),
-      knex('users').insert(USERS, 'id'),
-    ]).then((ids) => {
-      const listIds = ids[0];
+        knex('users_portfolios').del(),
+        knex('currencies').del(),
+        knex('portfolios').del(),
+        knex('users').del(),
+    ]).then(() =>
+        Promise.all([
+            knex('portfolios').insert(PORTFOLIOS, 'id'),
+            knex('users').insert(USERS, 'id'),
+        ]).then((ids) => {
+            const portfolioIds = ids[0];
 
-      return Promise.all([
-        knex('users_lists').insert(getUsersLists(listIds)),
-        knex('lists_items').insert(getListsItems(listIds)),
-      ]);
-    })
-  );
+            return Promise.all([
+                knex('users_portfolios').insert(getUsersPortfolios(portfolioIds)),
+                knex('currencies').insert(getCurrencies(portfolioIds)),
+            ]);
+        })
+    );

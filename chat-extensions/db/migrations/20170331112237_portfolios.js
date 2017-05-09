@@ -12,9 +12,15 @@ exports.up = (knex, Promise) => {
             table.string('title').defaultTo('Crypto-coin portfolio').notNullable();
         }),
 
-        knex.schema.createTable('portfolios_items', (table) => {
+        knex.schema.createTable('currencies', (table) => {
             table.increments();
             table.string('name').notNullable();
+            //  add CMC based ticker for price lookup
+            table.string('ticker').notNullable();
+            //  add in intial value for the coin, we can pull day to day data via CMC
+            table.integer('value').notNullable();
+            //  denomination of the value
+            table.string('denomination').notNullable();
             table.integer('portfolio_id').references('portfolios.id').notNullable();
             table.bigInteger('owner_fb_id').references('users.fb_id').notNullable();
             table.bigInteger('completer_fb_id').references('users.fb_id');
@@ -36,9 +42,9 @@ exports.up = (knex, Promise) => {
 
 exports.down = (knex, Promise) => {
     return Promise.all([
-        knex.schema.dropTable('users_portfolios'),
-        knex.schema.dropTable('portfolios_items'),
-        knex.schema.dropTable('users'),
         knex.schema.dropTable('portfolios'),
+        knex.schema.dropTable('currencies'),
+        knex.schema.dropTable('users'),
+        knex.schema.dropTable('users_portfolios'),
     ]);
 };
