@@ -21,11 +21,11 @@ const router = express.Router();
  * as well as in your servers environment.
  */
 router.get('/', (req, res) => {
-  if (req.query['hub.verify_token'] === process.env.WEBHOOK_TOKEN) {
-    res.send(req.query['hub.challenge']);
-  } else {
-    res.send('Error, wrong token');
-  }
+    if (req.query['hub.verify_token'] === process.env.WEBHOOK_TOKEN) {
+        res.send(req.query['hub.challenge']);
+    } else {
+        res.send('Error, wrong token');
+    }
 });
 
 /**
@@ -50,35 +50,35 @@ router.post('/', (req, res) => {
     don't get duplicate messages in the event that a request takes
     awhile to process.
   */
-  res.sendStatus(200);
+    res.sendStatus(200);
 
-  const data = req.body;
-  console.log('Webhook POST', JSON.stringify(data));
+    const data = req.body;
+    console.log('Webhook POST', JSON.stringify(data));
 
-  // Make sure this is a page subscription
-  if (data.object === 'page') {
-    // Iterate over each entry
-    // There may be multiple if batched
-    data.entry.forEach((pageEntry) => {
-      // Iterate over each messaging event and handle accordingly
-      pageEntry.messaging.forEach((messagingEvent) => {
-        console.log({messagingEvent});
+    // Make sure this is a page subscription
+    if (data.object === 'page') {
+        // Iterate over each entry
+        // There may be multiple if batched
+        data.entry.forEach((pageEntry) => {
+            // Iterate over each messaging event and handle accordingly
+            pageEntry.messaging.forEach((messagingEvent) => {
+                console.log({ messagingEvent });
 
-        if (messagingEvent.message) {
-          receiveApi.handleReceiveMessage(messagingEvent);
-        }
+                if (messagingEvent.message) {
+                    receiveApi.handleReceiveMessage(messagingEvent);
+                }
 
-        if (messagingEvent.postback) {
-          receiveApi.handleReceivePostback(messagingEvent);
-        } else {
-          console.log(
-            'Webhook received unknown messagingEvent: ',
-            messagingEvent
-          );
-        }
-      });
-    });
-  }
+                if (messagingEvent.postback) {
+                    receiveApi.handleReceivePostback(messagingEvent);
+                } else {
+                    console.log(
+                        'Webhook received unknown messaging event: ',
+                        messagingEvent
+                    );
+                }
+            });
+        });
+    }
 });
 
 export default router;

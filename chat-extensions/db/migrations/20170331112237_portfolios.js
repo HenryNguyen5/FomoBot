@@ -20,7 +20,7 @@ exports.up = (knex, Promise) => {
             //  add in intial value for the coin, we can pull day to day data via CMC
             table.integer('value').notNullable();
             //  denomination of the value
-            table.string('denomination').notNullable();
+            table.string('valueCurrency').notNullable();
             table.integer('portfolio_id').references('portfolios.id').notNullable();
             table.bigInteger('owner_fb_id').references('users.fb_id').notNullable();
             table.bigInteger('completer_fb_id').references('users.fb_id');

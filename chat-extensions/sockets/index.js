@@ -36,8 +36,8 @@ export default function attachSockets(io) {
         console.log(`A user connected (socket ID ${socket.id})`);
 
         channel('disconnect', UserSocket.leave);
-        channel('push:item:add', PortfolioSocket.addItem);
-        channel('push:item:update', PortfolioSocket.updateItem);
+        channel('push:currency:add', PortfolioSocket.addCurrency);
+        channel('push:currency:update', PortfolioSocket.updateCurrency);
         channel('push:title:update', PortfolioSocket.updateTitle);
         channel('push:user:join', UserSocket.join);
     });

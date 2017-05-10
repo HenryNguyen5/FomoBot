@@ -88,7 +88,7 @@ const sendPortfolios = (recipientId, action, portfolios, offset) => {
             break;
         case 1:
             // Show a single portfolio — Portfolio view templates require
-            // a minimum of 2 Elements. Rease More at:
+            // a minimum of 2 Elements. Read More at:
             // https://developers.facebook.com/docs/
             // messenger-platform/send-api-reference/portfolio-template
             const { id, title } = portfolios[0];

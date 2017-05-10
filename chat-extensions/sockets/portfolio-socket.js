@@ -11,7 +11,9 @@ import Currencies from '../models/currencies';
 
 // Update the title of the given portfolio and
 // notifies all subscribed users of the change.
-const updateTitle = ({ request: { portfolioId, title }, sendStatus, socket }) => {
+const updateTitle = ({ request, sendStatus, socket }) => {
+    const { portfolioId, title } = request;
+
     Portfolios.setTitle(title, portfolioId)
         .then((portfolio) => {
             socket.to(portfolio.id).emit('title:update', portfolio.title);
@@ -21,14 +23,13 @@ const updateTitle = ({ request: { portfolioId, title }, sendStatus, socket }) =>
 
 // Creates a new currency and notifies
 // all subscribed users of the change.
-const addCurrency = ({
-    request: { senderId, currencyId, name },
-    sendStatus,
-    allInRoom,
-}) => {
-    Currencies.create(name, currencyId, senderId)
+const addCurrency = ({ request, sendStatus, allInRoom }) => {
+    //  destructure the request
+    const { senderId, portfolioId, name, ticker, value, valueCurrency } = request;
+
+    Currencies.create(name, ticker, value, valueCurrency, portfolioId, senderId)
         .then((currency) => {
-            allInRoom(currencyId).emit('currency:add', currency);
+            allInRoom(portfolioId).emit('currency:add', currency);
             sendStatus('ok');
         });
 };
@@ -37,13 +38,11 @@ const addCurrency = ({
 // all subscribed users of the change.
 //  TODO: add the additional parameters
 const updateCurrency = ({ request, sendStatus, allInRoom }) => {
-    const { currencyId, id, name, completerFbId } = request;
-    console.log('request', { currencyId, id, name, completerFbId });
+    const { portfolioId, id, name, ticker, value, valueCurrency, completerFbId } = request;
 
-    Currencies.update({ id, name, completerFbId })
-        .then(({ id, name, completerFbId }) => {
-            allInRoom(currencyId)
-                .emit('currency:update', { id, name, completerFbId });
+    Currencies.update({ id, name, ticker, value, valueCurrency, completerFbId })
+        .then((currency) => {
+            allInRoom(portfolioId).emit('currency:update', currency);
             sendStatus('ok');
         });
 };
