@@ -70,7 +70,7 @@ const welcomeMessage = (apiUri) => {
             type: 'template',
             payload: {
                 template_type: 'button',
-                text: 'Ready to make a shared portfolio with your friends? Everyone can add items, check things off, and stay in sync.',
+                text: 'Ready to make a shared portfolio with your friends? Everyone can add currencies, check things off, and stay in sync.',
                 buttons: [
                     createPortfolioButton(apiUri),
                 ],

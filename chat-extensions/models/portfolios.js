@@ -37,11 +37,11 @@ const getAll = () =>
     .then((portfolios) => portfolios.map(camelCaseKeys));
 
 /**
- * getAllItems - Gets all currencies for the portfolio with the given ID.
- * @param   {Number} portfolioId - The ID of the portfolio to get items for.
+ * getAllCurrencies - Gets all currencies for the portfolio with the given ID.
+ * @param   {Number} portfolioId - The ID of the portfolio to get currencies for.
  * @returns {Array} currencies - Array of all currencies
  */
-const getAllItems = (portfolioId) =>
+const getAllCurrencies = (portfolioId) =>
     Currencies()
     .where('portfolio_id', parseInt(portfolioId, 10))
     .select()
@@ -205,7 +205,7 @@ export default {
     create,
     get,
     getAll,
-    getAllItems,
+    getAllCurrencies,
     getAllUsers,
     getForUser,
     getOwnedForUser,

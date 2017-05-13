@@ -107,25 +107,25 @@ describe('portfolio', () => {
         });
     });
 
-    describe('getAllItems', () => {
-        it('returns an Array of all Items for a portfolio', (done) => {
-            Portfolios.getAllItems(1)
-                .then((items) => {
-                    expect(items).to.have.lengthOf(3);
-                    expect(items[0]).to.be.an('object');
-                    expect(items[0]).to.have.property('name');
-                    expect(items[0]).to.have.property('portfolioId');
-                    expect(items[0]).to.have.property('ownerFbId');
-                    expect(items[0]).to.have.property('completerFbId');
+    describe('getAllCurrencies', () => {
+        it('returns an Array of all Currencies for a portfolio', (done) => {
+            Portfolios.getAllCurrencies(1)
+                .then((currencies) => {
+                    expect(currencies).to.have.lengthOf(3);
+                    expect(currencies[0]).to.be.an('object');
+                    expect(currencies[0]).to.have.property('name');
+                    expect(currencies[0]).to.have.property('portfolioId');
+                    expect(currencies[0]).to.have.property('ownerFbId');
+                    expect(currencies[0]).to.have.property('completerFbId');
                     done();
                 });
         });
 
-        it('returns an empty Array when there are no Items/portfolio', (done) => {
-            Portfolios.getAllItems(6)
-                .then((items) => {
-                    expect(items).to.have.lengthOf(0);
-                    expect(items).to.be.an('array');
+        it('returns an empty Array when there are no currencies/portfolio', (done) => {
+            Portfolios.getAllCurrencies(6)
+                .then((currencies) => {
+                    expect(currencies).to.have.lengthOf(0);
+                    expect(currencies).to.be.an('array');
                     done();
                 });
         });

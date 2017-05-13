@@ -64,10 +64,10 @@ const join = ({
 }) => {
     Promise.all([
         Portfolios.get(portfolioId),
-        Portfolios.getAllItems(portfolioId),
+        Portfolios.getAllCurrencies(portfolioId),
         Portfolios.getOwner(portfolioId),
         getUser(senderId),
-    ]).then(([portfolio, items, portfolioOwner, user]) => {
+    ]).then(([portfolio, currencies, portfolioOwner, user]) => {
         if (!portfolio) {
             console.error("portfolio doesn't exist!");
             sendStatus('noportfolio');
@@ -95,7 +95,7 @@ const join = ({
 
                         userSocket.emit('init', {
                             ...portfolio,
-                            items,
+                            currencies,
                             users: fbUsers,
                             ownerId: portfolioOwner ? portfolioOwner.fbId : user.fbId,
                         });
