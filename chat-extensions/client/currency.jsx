@@ -22,7 +22,7 @@ const Currency = ({
   value,
   valueCurrency,
   viewerId,
-  pushUpdatedItem,
+  pushUpdatedCurrency,
   completerFbId,
   ownerFbId,
   users,
@@ -41,12 +41,12 @@ const Currency = ({
   }
 
   return (
-    <FormCell checkbox className='item'>
+    <FormCell checkbox className='currency'>
       <CellHeader>
         <Checkbox
-          name={`item-${id}`}
+          name={`currency-${id}`}
           checked={!!completerFbId}
-          onChange={() => pushUpdatedItem(id, name, toComplete)}
+          onChange={() => pushUpdatedCurrency(id, name, ticker, value, valueCurrency, toComplete)}
         />
       </CellHeader>
 
@@ -66,7 +66,7 @@ Currency.PropTypes = {
   value: React.PropTypes.number.isRequired,
   valueCurrency: React.PropTypes.string.isRequired,
   viewerId: React.PropTypes.string.isRequired,
-  pushUpdatedItem: React.PropTypes.func.isRequired,
+  pushUpdatedCurrency: React.PropTypes.func.isRequired,
   ownerFbId: React.PropTypes.string.isRequired,
   completerFbId: React.PropTypes.string,
   users: React.PropTypes.arrayOf(React.PropTypes.shape({

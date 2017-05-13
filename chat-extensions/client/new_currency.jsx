@@ -63,7 +63,7 @@ const NewCurrency = ({
             id='new-currency-text'
             onBlur={onSubmit}
             onChange={(event) => setNewCurrencyText(event.target.value)}
-            placeholder='Add a currency to the list'
+            placeholder='Add a currency to the portfolio'
             type='text'
             value={newCurrencyText}
           />

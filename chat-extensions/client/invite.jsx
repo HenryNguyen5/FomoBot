@@ -21,13 +21,13 @@ import messages from '../messenger-api-helpers/messages';
  */
 const Invite = ({
   title,
-  listId,
+  portfolioId,
   apiUri,
   sharingMode,
   buttonText,
   imgSource,
 }) => {
-  const shareList = () => {
+  const sharePortfolio = () => {
     window.MessengerExtensions.beginShareFlow(
       function success(response) {
         if (response.is_sent) {
@@ -36,7 +36,7 @@ const Invite = ({
       }, function error(errorCode, errorMessage) {
         console.error({errorCode, errorMessage});
       },
-      messages.shareListMessage(apiUri, listId, title),
+      messages.sharePortfolioMessage(apiUri, portfolioId, title),
       sharingMode);
   };
 
@@ -44,7 +44,7 @@ const Invite = ({
 
   return (
     <div id='invite'>
-      <Button onClick={shareList}>
+      <Button onClick={sharePortfolio}>
         <span className={`invite-icon ${iconClassName}`} />
         {buttonText}
       </Button>
@@ -53,7 +53,7 @@ const Invite = ({
 };
 
 Invite.PropTypes = {
-  shareList: React.PropTypes.func.isRequired,
+  sharePortfolio: React.PropTypes.func.isRequired,
 };
 
 export default Invite;

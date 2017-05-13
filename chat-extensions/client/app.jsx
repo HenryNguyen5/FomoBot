@@ -43,7 +43,7 @@ export default class App extends React.Component {
     this.setOnlineUsers = this.setOnlineUsers.bind(this);
 
     this.state = {
-      currencys: [],
+      currencies: [],
       newCurrencyText: '',
       ownerId: null,
       resetting: false,
@@ -113,7 +113,7 @@ export default class App extends React.Component {
      =           State & Event Handlers          =
      ============================================= */
 
-  /* ----------  List  ---------- */
+  /* ----------  Portfolio  ---------- */
 
   // For the initial data fetch
   setOwnerId(ownerId) {
@@ -162,10 +162,10 @@ export default class App extends React.Component {
     this.setState({users});
   }
 
-  /* ----------  Currencys  ---------- */
+  /* ----------  currencies  ---------- */
 
   addCurrency(currency) {
-    this.setState({currencys: [...this.state.currencys, currency]});
+    this.setState({currencies: [...this.state.currencies, currency]});
   }
 
   pushUpdatedCurrency(currencyId, name, ticker, value, valueCurrency, completerFbId) {
@@ -173,13 +173,13 @@ export default class App extends React.Component {
   }
 
   setCurrency({id, name, ticker, value, valueCurrency, completerFbId}) {
-    const currencys = this.state.currencys.map((currency) =>
+    const currencies = this.state.currencies.map((currency) =>
       (currency.id === id)
         ? Object.assign({}, currency, {id: id, name, ticker, value, valueCurrency, completerFbId})
         : currency
     );
 
-    this.setState({currencys});
+    this.setState({currencies});
   }
 
   /* ----------  New Currency Field  ---------- */
@@ -217,8 +217,8 @@ export default class App extends React.Component {
     );
 
     // Add socket event handlers.
-    socket.on('init', ({users, currencys, ownerId, title} = {}) => {
-      this.setState({users, currencys, ownerId, title});
+    socket.on('init', ({users, currencies, ownerId, title} = {}) => {
+      this.setState({users, currencies, ownerId, title});
     });
 
     socket.on('currency:add', this.addCurrency);
@@ -257,7 +257,7 @@ export default class App extends React.Component {
   render() {
     const {
       ownerId,
-      currencys,
+      currencies,
       users,
       title,
       resetting,
@@ -273,9 +273,9 @@ export default class App extends React.Component {
       /* ----------  Setup Sections (anything dynamic or repeated) ---------- */
 
       const {apiUri, portfolioId, viewerId, threadType} = this.props;
-      const currencyList = currencys.filter(Boolean).map((currency) => {
+      const currencyList = currencies.filter(Boolean).map((currency) => {
         return (
-          <Item
+          <Currency
             {...currency}
             key={currency.id}
             users={users}
@@ -358,9 +358,9 @@ export default class App extends React.Component {
 
           {invite}
         </section>);
-    } else if (socketStatus === 'noList') {
+    } else if (socketStatus === 'noPortfolio') {
       // We were unable to find a matching portfolio in our system.
-      page = <ListNotFound/>;
+      page = <PortfolioNotFound/>;
     } else {
       // Show a loading screen until app is ready
       page = <LoadingScreen key='load' />;

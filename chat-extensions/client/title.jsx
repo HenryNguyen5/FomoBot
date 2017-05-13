@@ -9,7 +9,7 @@
 import React, {createElement} from 'react';
 import {Input} from 'react-weui';
 
-// List title field
+// Portfolio title field
 const Title = ({text, setTitleText}) => {
   return (
     <div id='title'>
