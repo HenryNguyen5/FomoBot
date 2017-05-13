@@ -12,11 +12,15 @@ import React from 'react';
 import {CellBody, CellFooter, CellHeader, Checkbox, FormCell} from 'react-weui';
 
 /*
- * A single list item, including controls
+ * A single portfolio currency, including controls
+ * 
  */
-const Item = ({
+const Currency = ({
   id,
   name,
+  ticker,
+  value,
+  valueCurrency,
   viewerId,
   pushUpdatedItem,
   completerFbId,
@@ -46,16 +50,21 @@ const Item = ({
         />
       </CellHeader>
 
-      <CellBody className={classes}>{name}</CellBody>
+      //TODO: Calculate actual value based on valueCurrency + amount in wallet
+      <CellBody className={classes}>{ticker+' '+value}</CellBody> //Ticker - current value
 
+      //TODO: Show 24 hour percent change - maybe graph (like coin market cap)
       <CellFooter>{action} by {attribution}</CellFooter>
+
     </FormCell>
   );
 };
 
-Item.PropTypes = {
+Currency.PropTypes = {
   id: React.PropTypes.number.isRequired,
   name: React.PropTypes.string.isRequired,
+  value: React.PropTypes.number.isRequired,
+  valueCurrency: React.PropTypes.string.isRequired,
   viewerId: React.PropTypes.string.isRequired,
   pushUpdatedItem: React.PropTypes.func.isRequired,
   ownerFbId: React.PropTypes.string.isRequired,
@@ -66,4 +75,4 @@ Item.PropTypes = {
   })).isRequired,
 };
 
-export default Item;
+export default Currency;

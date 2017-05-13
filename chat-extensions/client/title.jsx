@@ -15,7 +15,7 @@ const Title = ({text, setTitleText}) => {
     <div id='title'>
       <Input
         value={text}
-        placeholder='List Title'
+        placeholder='Currency'
         onChange={(event) => setTitleText(event.target.value)}
       />
     </div>

@@ -13,10 +13,10 @@ import {Panel, Form} from 'react-weui';
 
 // ===== COMPONENTS ============================================================
 import Invite from './invite.jsx';
-import Item from './item.jsx';
-import ListNotFound from './list_not_found.jsx';
+import Currency from './currency.jsx';
+import PortfolioNotFound from './portfolio_not_found.jsx';
 import LoadingScreen from './loading_screen.jsx';
-import NewItem from './new_item.jsx';
+import NewCurrency from './new_currency.jsx';
 import Title from './title.jsx';
 import Updating from './updating.jsx';
 import Viewers from './viewers.jsx';
@@ -31,20 +31,20 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.addItem = this.addItem.bind(this);
-    this.addNewItem = this.addNewItem.bind(this);
-    this.pushUpdatedItem = this.pushUpdatedItem.bind(this);
+    this.addCurrency = this.addCurrency.bind(this);
+    this.addNewCurrency = this.addNewCurrency.bind(this);
+    this.pushUpdatedCurrency = this.pushUpdatedCurrency.bind(this);
     this.setDocumentTitle = this.setDocumentTitle.bind(this);
-    this.setItem = this.setItem.bind(this);
-    this.setNewItemText = this.setNewItemText.bind(this);
+    this.setCurrency = this.setCurrency.bind(this);
+    this.setNewCurrencyText = this.setNewCurrencyText.bind(this);
     this.setOwnerId = this.setOwnerId.bind(this);
     this.setTitleText = this.setTitleText.bind(this);
     this.userJoin = this.userJoin.bind(this);
     this.setOnlineUsers = this.setOnlineUsers.bind(this);
 
     this.state = {
-      items: [],
-      newItemText: '',
+      currencys: [],
+      newCurrencyText: '',
       ownerId: null,
       resetting: false,
       title: this.props.title,
@@ -55,7 +55,7 @@ export default class App extends React.Component {
 
   static propTypes = {
     apiUri: React.PropTypes.string.isRequired,
-    listId: React.PropTypes.number.isRequired,
+    portfolioId: React.PropTypes.number.isRequired,
     socketAddress: React.PropTypes.string.isRequired,
     viewerId: React.PropTypes.number.isRequired,
     threadType: React.PropTypes.string.isRequired,
@@ -82,7 +82,7 @@ export default class App extends React.Component {
       `push:${channel}`,
       {
         senderId: this.props.viewerId,
-        listId: this.props.listId,
+        portfolioId: this.props.portfolioId,
         ...message,
       },
       (status) => {
@@ -104,7 +104,7 @@ export default class App extends React.Component {
 
   /* ----------  Update Document Attributes  ---------- */
 
-  setDocumentTitle(title = 'Shopping List') {
+  setDocumentTitle(title = 'Portfolio') {
     console.log('Updating document title (above page):', title);
     document.title = title;
   }
@@ -162,46 +162,46 @@ export default class App extends React.Component {
     this.setState({users});
   }
 
-  /* ----------  Items  ---------- */
+  /* ----------  Currencys  ---------- */
 
-  addItem(item) {
-    this.setState({items: [...this.state.items, item]});
+  addCurrency(currency) {
+    this.setState({currencys: [...this.state.currencys, currency]});
   }
 
-  pushUpdatedItem(itemId, name, completerFbId) {
-    this.pushToRemote('item:update', {id: itemId, name, completerFbId});
+  pushUpdatedCurrency(currencyId, name, ticker, value, valueCurrency, completerFbId) {
+    this.pushToRemote('currency:update', {id: currencyId, name, ticker, value, valueCurrency, completerFbId});
   }
 
-  setItem({id, name, completerFbId}) {
-    const items = this.state.items.map((item) =>
-      (item.id === id)
-        ? Object.assign({}, item, {id: id, name, completerFbId})
-        : item
+  setCurrency({id, name, ticker, value, valueCurrency, completerFbId}) {
+    const currencys = this.state.currencys.map((currency) =>
+      (currency.id === id)
+        ? Object.assign({}, currency, {id: id, name, ticker, value, valueCurrency, completerFbId})
+        : currency
     );
 
-    this.setState({items});
+    this.setState({currencys});
   }
 
-  /* ----------  New Item Field  ---------- */
+  /* ----------  New Currency Field  ---------- */
 
-  setNewItemText(newText) {
-    console.log('Set new item text:', newText);
-    this.setState({newItemText: newText});
+  setNewCurrencyText(newText) {
+    console.log('Set new currency text:', newText);
+    this.setState({newCurrencyText: newText});
   }
 
-  // Turn new item text into an actual list item
-  addNewItem() {
-    const {newItemText: name} = this.state;
+  // Turn new currency text into an actual portfolio currency
+  addNewCurrency() {
+    const {newCurrencyText: name} = this.state;
 
-    this.resetNewItem();
-    this.pushToRemote('item:add', {name});
+    this.resetNewCurrency();
+    this.pushToRemote('currency:add', {name, ticker, value, valueCurrency});
   }
 
-  resetNewItem() {
+  resetNewCurrency() {
     this.setState({resetting: true});
 
     setTimeout(() => {
-      this.setState({newItemText: '', resetting: false});
+      this.setState({newCurrencyText: '', resetting: false});
     }, 600);
   }
 
@@ -217,13 +217,13 @@ export default class App extends React.Component {
     );
 
     // Add socket event handlers.
-    socket.on('init', ({users, items, ownerId, title} = {}) => {
-      this.setState({users, items, ownerId, title});
+    socket.on('init', ({users, currencys, ownerId, title} = {}) => {
+      this.setState({users, currencys, ownerId, title});
     });
 
-    socket.on('item:add', this.addItem);
-    socket.on('item:update', this.setItem);
-    socket.on('list:setOwnerId', this.setOwnerId);
+    socket.on('currency:add', this.addCurrency);
+    socket.on('currency:update', this.setCurrency);
+    socket.on('portfolio:setOwnerId', this.setOwnerId);
     socket.on('title:update', this.setDocumentTitle);
     socket.on('user:join', this.userJoin);
     socket.on('users:setOnline', this.setOnlineUsers);
@@ -257,11 +257,11 @@ export default class App extends React.Component {
   render() {
     const {
       ownerId,
-      items,
+      currencys,
       users,
       title,
       resetting,
-      newItemText,
+      newCurrencyText,
       updating,
       socketStatus,
     } = this.state;
@@ -272,15 +272,15 @@ export default class App extends React.Component {
     if (users.length > 0) {
       /* ----------  Setup Sections (anything dynamic or repeated) ---------- */
 
-      const {apiUri, listId, viewerId, threadType} = this.props;
-      const itemList = items.filter(Boolean).map((item) => {
+      const {apiUri, portfolioId, viewerId, threadType} = this.props;
+      const currencyList = currencys.filter(Boolean).map((currency) => {
         return (
           <Item
-            {...item}
-            key={item.id}
+            {...currency}
+            key={currency.id}
             users={users}
             viewerId={viewerId}
-            pushUpdatedItem={this.pushUpdatedItem}
+            pushUpdatedCurrency={this.pushUpdatedCurrency}
           />
         );
       });
@@ -288,14 +288,14 @@ export default class App extends React.Component {
       let invite;
       const isOwner = viewerId === ownerId;
       if (isOwner || threadType !== 'USER_TO_PAGE') {
-        // only owners are able to share their lists and other
+        // only owners are able to share their portfolios and other
         // participants are able to post back to groups.
         let sharingMode;
         let buttonText;
 
         if (threadType === 'USER_TO_PAGE') {
           sharingMode = 'broadcast';
-          buttonText = 'Invite your friends to this list';
+          buttonText = 'Invite your friends to this portfolio';
         } else {
           sharingMode = 'current_thread';
           buttonText = 'Send to conversation';
@@ -305,7 +305,7 @@ export default class App extends React.Component {
           <Invite
             title={title}
             apiUri={apiUri}
-            listId={listId}
+            portfolioId={portfolioId}
             sharingMode={sharingMode}
             buttonText={buttonText}
           />
@@ -324,7 +324,7 @@ export default class App extends React.Component {
 
     /* ----------  Inner Structure  ---------- */
       page =
-        (<section id='list'>
+        (<section id='portfolio'>
           <Viewers
             users={users}
             viewerId={viewerId}
@@ -333,23 +333,23 @@ export default class App extends React.Component {
           <Panel>
             {titleField}
 
-            <section id='items'>
+            <section id='currencies'>
               <Form checkbox>
                 <ReactCSSTransitionGroup
-                  transitionName='item'
+                  transitionName='currency'
                   transitionEnterTimeout={250}
                   transitionLeaveTimeout={250}
                 >
-                  {itemList}
+                  {currencyList}
                 </ReactCSSTransitionGroup>
               </Form>
 
-              <NewItem
-                newItemText={newItemText}
+              <NewCurrency
+                newCurrencyText={newCurrencyText}
                 disabled={updating}
                 resetting={resetting}
-                addNewItem={this.addNewItem}
-                setNewItemText={this.setNewItemText}
+                addNewCurrency={this.addNewCurrency}
+                setNewCurrencyText={this.setNewCurrencyText}
               />
             </section>
           </Panel>
@@ -359,7 +359,7 @@ export default class App extends React.Component {
           {invite}
         </section>);
     } else if (socketStatus === 'noList') {
-      // We were unable to find a matching list in our system.
+      // We were unable to find a matching portfolio in our system.
       page = <ListNotFound/>;
     } else {
       // Show a loading screen until app is ready

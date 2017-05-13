@@ -26,27 +26,27 @@ import '../public/style.css';
 /*
  * Function for attaching the application when MessengerExtensions has loaded
  */
-window.attachApp = (viewerId, listId, socketAddress, threadType) => {
-  const apiUri = `https://${window.location.hostname}`;
-  let app;
-  if (viewerId) {
-    app = (
-      // The main show
-      <App
-        viewerId={viewerId}
-        listId={listId}
-        apiUri={apiUri}
-        socketAddress={socketAddress}
-        threadType={threadType}
-      />
-    );
-  } else {
-    /**
-     * MessengerExtensions are only available on iOS and Android,
-     * so show an error page if MessengerExtensions was unable to start
-     */
-    app = <Oops />;
-  }
+window.attachApp = (viewerId, portfolioId, socketAddress, threadType) => {
+    const apiUri = `https://${window.location.hostname}`;
+    let app;
+    if (viewerId) {
+        app = (
+            // The main show
+            <
+            App viewerId = { viewerId }
+            portfolioId = { portfolioId }
+            apiUri = { apiUri }
+            socketAddress = { socketAddress }
+            threadType = { threadType }
+            />
+        );
+    } else {
+        /**
+         * MessengerExtensions are only available on iOS and Android,
+         * so show an error page if MessengerExtensions was unable to start
+         */
+        app = < Oops / > ;
+    }
 
-  ReactDOM.render(app, document.getElementById('content'));
+    ReactDOM.render(app, document.getElementById('content'));
 };

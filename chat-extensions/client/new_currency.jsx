@@ -28,20 +28,20 @@ const lockScroll = (startTime) => {
   }
 };
 
-// The NewItem Input Field Component
-const NewItem = ({
-  addNewItem,
+// The NewCurrency Input Field Component
+const NewCurrency = ({
+  addNewCurrency,
   disabled,
-  newItemText,
+  newCurrencyText,
   resetting,
-  setNewItemText,
+  setNewCurrencyText,
 }) => {
   const onSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    if (!disabled && newItemText.length > 0) {
-      addNewItem();
+    if (!disabled && newCurrencyText.length > 0) {
+      addNewCurrency();
       lockScroll(Date.now());
     }
   };
@@ -49,7 +49,7 @@ const NewItem = ({
   const classes = resetting ? 'resetting' : null; // For wipe animation
 
   return (
-    <Cell id='new-item'>
+    <Cell id='new-currency'>
       <CellHeader id='input-indicator' onClick={onSubmit}>
         <div className='weui-uploader__input-box' />
       </CellHeader>
@@ -60,12 +60,12 @@ const NewItem = ({
           <Input
             className={classes}
             disabled={disabled}
-            id='new-item-text'
+            id='new-currency-text'
             onBlur={onSubmit}
-            onChange={(event) => setNewItemText(event.target.value)}
-            placeholder='Add an item to the list'
+            onChange={(event) => setNewCurrencyText(event.target.value)}
+            placeholder='Add a currency to the list'
             type='text'
-            value={newItemText}
+            value={newCurrencyText}
           />
         </form>
       </CellBody>
@@ -73,11 +73,11 @@ const NewItem = ({
   );
 };
 
-NewItem.proptypes = {
-  addNewItem: React.PropTypes.func.isRequired,
+NewCurrency.proptypes = {
+  addNewCurrency: React.PropTypes.func.isRequired,
   disabled: React.PropTypes.bool.isRequired,
-  newItemText: React.PropTypes.string,
-  setNewItemText: React.PropTypes.func.isRequired,
+  newCurrencyText: React.PropTypes.string,
+  setNewCurrencyText: React.PropTypes.func.isRequired,
 };
 
-export default NewItem;
+export default NewCurrency;
