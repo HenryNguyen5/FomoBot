@@ -76,7 +76,7 @@ const join = ({
         Portfolios.addUser(portfolio.id, user.fbId)
             .then((usersportfolio) => {
                 if (!portfolioOwner) {
-                    sendApi.sendportfolioCreated(user.fbId, portfolio.id, portfolio.title);
+                    sendApi.sendPortfolioCreated(user.fbId, portfolio.id, portfolio.title);
                     allInRoom(portfolio.id).emit('portfolio:setOwnerId', usersportfolio.userFbId);
                 }
             })
