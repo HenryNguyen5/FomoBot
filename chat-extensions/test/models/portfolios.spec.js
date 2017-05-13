@@ -114,6 +114,9 @@ describe('portfolio', () => {
                     expect(currencies).to.have.lengthOf(3);
                     expect(currencies[0]).to.be.an('object');
                     expect(currencies[0]).to.have.property('name');
+                    expect(currencies[0]).to.have.property('ticker');
+                    expect(currencies[0]).to.have.property('value');
+                    expect(currencies[0]).to.have.property('valueCurrency');
                     expect(currencies[0]).to.have.property('portfolioId');
                     expect(currencies[0]).to.have.property('ownerFbId');
                     expect(currencies[0]).to.have.property('completerFbId');
