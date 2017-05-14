@@ -5,9 +5,9 @@ import knex from '../../db/knex';
 import Portfolios from '../../models/portfolios';
 
 // Test comparator values are created in `test/sample-seeds` file.
-const DEFAULT_TITLE = 'Crypto-coin portfolio';
+const DEFAULT_TITLE = 'BTC portfolio';
 const PORTFOLIO_1_TITLE = DEFAULT_TITLE;
-const PORTFOLIO_2_TITLE = 'BTC portfolio';
+const PORTFOLIO_2_TITLE = 'ETH portfolio';
 const USER_1_FB_ID = '1';
 const USER_2_FB_ID = '2';
 

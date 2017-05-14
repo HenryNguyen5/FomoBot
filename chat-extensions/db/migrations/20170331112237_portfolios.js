@@ -18,7 +18,7 @@ exports.up = (knex, Promise) => {
             //  add CMC based ticker for price lookup
             table.string('ticker').notNullable();
             //  add in intial value for the coin, we can pull day to day data via CMC
-            table.integer('value').notNullable();
+            table.decimal('value').notNullable();
             //  denomination of the value
             table.string('valueCurrency').notNullable();
             table.integer('portfolio_id').references('portfolios.id').notNullable();
@@ -42,9 +42,11 @@ exports.up = (knex, Promise) => {
 
 exports.down = (knex, Promise) => {
     return Promise.all([
-        knex.schema.dropTable('portfolios'),
         knex.schema.dropTable('currencies'),
-        knex.schema.dropTable('users'),
         knex.schema.dropTable('users_portfolios'),
+        knex.schema.dropTable('portfolios'),
+
+        knex.schema.dropTable('users'),
+
     ]);
 };
