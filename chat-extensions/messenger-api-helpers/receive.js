@@ -55,9 +55,9 @@ const handleReceivePostback = (event) => {
     const senderId = event.sender.id;
 
     // Perform an action based on the type of payload received.
-    if (type.substring(0, 11) === 'owned_portfolios') {
+    if (type.substring(0, 16) === 'owned_portfolios') {
         sendOwnedPortfolios(senderId, type);
-    } else if (type.substring(0, 16) === 'subscribed_portfolios') {
+    } else if (type.substring(0, 21) === 'subscribed_portfolios') {
         sendSharedPortfolios(senderId, type);
     } else if (type.substring(0, 11) === 'get_started') {
         sendApi.sendWelcomeMessage(senderId);
