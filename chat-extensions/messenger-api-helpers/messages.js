@@ -23,14 +23,17 @@
  * @returns {object} -
  *   Message to create a button pointing to the portfolio in a webview.
  */
-const openExistingPortfolioButton = (portfolioUrl, buttonText = 'Edit portfolio') => {
-    return {
-        type: 'web_url',
-        title: buttonText,
-        url: portfolioUrl,
-        messenger_extensions: true,
-        webview_height_ratio: 'tall',
-    };
+const openExistingPortfolioButton = (
+  portfolioUrl,
+  buttonText = 'Edit portfolio'
+) => {
+  return {
+    type: 'web_url',
+    title: buttonText,
+    url: portfolioUrl,
+    messenger_extensions: true,
+    webview_height_ratio: 'tall',
+  };
 };
 
 /**
@@ -42,13 +45,13 @@ const openExistingPortfolioButton = (portfolioUrl, buttonText = 'Edit portfolio'
  *   Message to create a button pointing to the new portfolio form.
  */
 const createPortfolioButton = (apiUri, buttonTitle = 'Create a portfolio') => {
-    return {
-        type: 'web_url',
-        url: `${apiUri}/portfolios/new`,
-        title: buttonTitle,
-        webview_height_ratio: 'tall',
-        messenger_extensions: true,
-    };
+  return {
+    type: 'web_url',
+    url: `${apiUri}/portfolios/new`,
+    title: buttonTitle,
+    webview_height_ratio: 'tall',
+    messenger_extensions: true,
+  };
 };
 
 /*
@@ -65,18 +68,16 @@ const createPortfolioButton = (apiUri, buttonTitle = 'Create a portfolio') => {
  * @returns {object} - Message with welcome text and a button to start a new portfolio.
  */
 const welcomeMessage = (apiUri) => {
-    return {
-        attachment: {
-            type: 'template',
-            payload: {
-                template_type: 'button',
-                text: 'Ready to make a shared portfolio with your friends? Everyone can add currencies, check things off, and stay in sync.',
-                buttons: [
-                    createPortfolioButton(apiUri),
-                ],
-            },
-        },
-    };
+  return {
+    attachment: {
+      type: 'template',
+      payload: {
+        template_type: 'button',
+        text: 'Ready to make a shared portfolio with your friends? Everyone can add currencies, check things off, and stay in sync.',
+        buttons: [createPortfolioButton(apiUri)],
+      },
+    },
+  };
 };
 
 /**
@@ -86,18 +87,16 @@ const welcomeMessage = (apiUri) => {
  * @returns {object} - Message with welcome text and a button to start a new portfolio.
  */
 const noPortfoliosMessage = (apiUri) => {
-    return {
-        attachment: {
-            type: 'template',
-            payload: {
-                template_type: 'button',
-                text: 'It looks like you don’t have any portfolios yet. Would you like to create one?',
-                buttons: [
-                    createPortfolioButton(apiUri),
-                ],
-            },
-        },
-    };
+  return {
+    attachment: {
+      type: 'template',
+      payload: {
+        template_type: 'button',
+        text: 'It looks like you don’t have any portfolios yet. Would you like to create one?',
+        buttons: [createPortfolioButton(apiUri)],
+      },
+    },
+  };
 };
 
 /**
@@ -109,7 +108,8 @@ const noPortfoliosMessage = (apiUri) => {
  * @param {int} portfolioId - The portfolio ID.
  * @returns {string} - URI for the required portfolio.
  */
-const portfolioUrl = (apiUri, portfolioId) => `${apiUri}/portfolios/${portfolioId}`;
+const portfolioUrl = (apiUri, portfolioId) =>
+  `${apiUri}/portfolios/${portfolioId}`;
 
 /**
  * A single portfolio for the portfolio template.
@@ -122,16 +122,16 @@ const portfolioUrl = (apiUri, portfolioId) => `${apiUri}/portfolios/${portfolioI
  * @returns {object} - Message with welcome text and a button to start a new portfolio.
  */
 const portfolioElement = ({ id, subscriberIds, title }, apiUri) => {
-    return {
-        title: title,
-        subtitle: `Shared with ${[...subscriberIds].length} people`,
-        default_action: {
-            type: 'web_url',
-            url: portfolioUrl(apiUri, id),
-            messenger_extensions: true,
-            webview_height_ratio: 'tall',
-        },
-    };
+  return {
+    title: title,
+    subtitle: `Shared with ${[...subscriberIds].length} people`,
+    default_action: {
+      type: 'web_url',
+      url: portfolioUrl(apiUri, id),
+      messenger_extensions: true,
+      webview_height_ratio: 'tall',
+    },
+  };
 };
 
 /**
@@ -145,35 +145,39 @@ const portfolioElement = ({ id, subscriberIds, title }, apiUri) => {
  * @returns {object} - Message with welcome text and a button to start a new portfolio.
  */
 const paginatedPortfoliosMessage = (apiUri, action, portfolios, offset = 0) => {
-    const pageportfolios = portfolios.slice(offset, offset + 4);
+  const pageportfolios = portfolios.slice(offset, offset + 4);
 
-    let buttons;
-    if (portfolios.length > (offset + 4)) {
-        buttons = [{
-            title: 'View More',
-            type: 'postback',
-            payload: `${action}_OFFSET_${offset + 4}`,
-        }, ];
-    }
+  let buttons;
+  if (portfolios.length > offset + 4) {
+    buttons = [
+      {
+        title: 'View More',
+        type: 'postback',
+        payload: `${action}_OFFSET_${offset + 4}`,
+      },
+    ];
+  }
 
-    return {
-        attachment: {
-            type: 'template',
-            payload: {
-                template_type: 'portfolio',
-                top_element_style: 'compact',
-                elements: pageportfolios.map((portfolio) => portfolioElement(portfolio, apiUri)),
-                buttons,
-            },
-        },
-    };
+  return {
+    attachment: {
+      type: 'template',
+      payload: {
+        template_type: 'portfolio',
+        top_element_style: 'compact',
+        elements: pageportfolios.map((portfolio) =>
+          portfolioElement(portfolio, apiUri)
+        ),
+        buttons,
+      },
+    },
+  };
 };
 
 /**
  * Message that informs the user that their portfolio has been created.
  */
 const portfolioCreatedMessage = {
-    text: 'Your portfolio was created.',
+  text: 'Your portfolio was created. V0.01',
 };
 
 /**
@@ -186,34 +190,36 @@ const portfolioCreatedMessage = {
  * @returns {object} - Message to configure the customized sharing menu.
  */
 const sharePortfolioMessage = (apiUri, portfolioId, title, buttonText) => {
-    const urlToPortfolio = portfolioUrl(apiUri, portfolioId);
-    console.log({ urlToPortfolio });
-    return {
-        attachment: {
-            type: 'template',
-            payload: {
-                template_type: 'generic',
-                elements: [{
-                    title: title,
-                    image_url: `${apiUri}/media/button-cover.png`,
-                    subtitle: 'A shared portfolio from Tasks',
-                    default_action: {
-                        type: 'web_url',
-                        url: urlToPortfolio,
-                        messenger_extensions: true,
-                    },
-                    buttons: [openExistingPortfolioButton(urlToPortfolio, buttonText)],
-                }],
+  const urlToPortfolio = portfolioUrl(apiUri, portfolioId);
+  console.log({ urlToPortfolio });
+  return {
+    attachment: {
+      type: 'template',
+      payload: {
+        template_type: 'generic',
+        elements: [
+          {
+            title: title,
+            image_url: `${apiUri}/media/button-cover.png`,
+            subtitle: 'A shared portfolio from Tasks',
+            default_action: {
+              type: 'web_url',
+              url: urlToPortfolio,
+              messenger_extensions: true,
             },
-        },
-    };
+            buttons: [openExistingPortfolioButton(urlToPortfolio, buttonText)],
+          },
+        ],
+      },
+    },
+  };
 };
 
 export default {
-    welcomeMessage,
-    portfolioCreatedMessage,
-    paginatedPortfoliosMessage,
-    createPortfolioButton,
-    noPortfoliosMessage,
-    sharePortfolioMessage,
+  welcomeMessage,
+  portfolioCreatedMessage,
+  paginatedPortfoliosMessage,
+  createPortfolioButton,
+  noPortfoliosMessage,
+  sharePortfolioMessage,
 };
