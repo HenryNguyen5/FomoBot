@@ -6,8 +6,8 @@
  */
 
 // ===== MODULES ===============================================================
-import React, {createElement} from 'react';
-import {Cell, CellBody, CellHeader, Input} from 'react-weui';
+import React, { createElement } from 'react';
+import { Cell, CellBody, CellHeader, Input } from 'react-weui';
 
 const SCROLL_DURATION = 1000; // total duration in ms for scroll animation.
 
@@ -19,7 +19,7 @@ const SCROLL_DURATION = 1000; // total duration in ms for scroll animation.
 const lockScroll = (startTime) => {
   const deltaTime = Date.now() - startTime;
   const htmlElement = document.documentElement;
-  const {scrollTo, scrollX, innerHeight} = window;
+  const { scrollTo, scrollX, innerHeight } = window;
 
   scrollTo(scrollX, htmlElement.offsetHeight - innerHeight);
 
@@ -34,7 +34,8 @@ const NewCurrency = ({
   disabled,
   newCurrencyText,
   resetting,
-  setNewCurrencyText,
+  setNewCurrencyTicker,
+  setNewCurrencyValue,
 }) => {
   const onSubmit = (event) => {
     event.preventDefault();
@@ -60,10 +61,20 @@ const NewCurrency = ({
           <Input
             className={classes}
             disabled={disabled}
-            id='new-currency-text'
+            id='new-currency-ticker'
             onBlur={onSubmit}
-            onChange={(event) => setNewCurrencyText(event.target.value)}
-            placeholder='Add a currency to the portfolio'
+            onChange={(event) => setNewCurrencyTicker(event.target.value)}
+            placeholder='Currency Ticker'
+            type='text'
+            value={newCurrencyText}
+          />
+          <Input
+            className={classes}
+            disabled={disabled}
+            id='new-currency-value'
+            onBlur={onSubmit}
+            onChange={(event) => setNewCurrencyValue(event.target.value)}
+            placeholder='Quantity'
             type='text'
             value={newCurrencyText}
           />
@@ -77,7 +88,8 @@ NewCurrency.proptypes = {
   addNewCurrency: React.PropTypes.func.isRequired,
   disabled: React.PropTypes.bool.isRequired,
   newCurrencyText: React.PropTypes.string,
-  setNewCurrencyText: React.PropTypes.func.isRequired,
+  setNewCurrencyTicker: React.PropTypes.func.isRequired,
+  setNewCurrencyValue: React.PropTypes.func.isRequired,
 };
 
 export default NewCurrency;

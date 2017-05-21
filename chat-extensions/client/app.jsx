@@ -7,9 +7,9 @@
 
 // ===== MODULES ===============================================================
 import io from 'socket.io-client';
-import React, {createElement} from 'react';
+import React, { createElement } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import {Panel, Form} from 'react-weui';
+import { Panel, Form } from 'react-weui';
 
 // ===== COMPONENTS ============================================================
 import Invite from './invite.jsx';
@@ -36,7 +36,7 @@ export default class App extends React.Component {
     this.pushUpdatedCurrency = this.pushUpdatedCurrency.bind(this);
     this.setDocumentTitle = this.setDocumentTitle.bind(this);
     this.setCurrency = this.setCurrency.bind(this);
-    this.setNewCurrencyText = this.setNewCurrencyText.bind(this);
+    this.setNewCurrencyText = this.setNewCurrencyTicker.bind(this);
     this.setOwnerId = this.setOwnerId.bind(this);
     this.setTitleText = this.setTitleText.bind(this);
     this.userJoin = this.userJoin.bind(this);
@@ -59,7 +59,7 @@ export default class App extends React.Component {
     socketAddress: React.PropTypes.string.isRequired,
     viewerId: React.PropTypes.number.isRequired,
     threadType: React.PropTypes.string.isRequired,
-  }
+  };
 
   /* =============================================
      =               Helper Methods              =
@@ -76,7 +76,7 @@ export default class App extends React.Component {
    * and read the same in the rest of the code
    */
   pushToRemote(channel, message) {
-    this.setState({updating: true}); // Set the updating spinner
+    this.setState({ updating: true }); // Set the updating spinner
 
     socket.emit(
       `push:${channel}`,
@@ -118,14 +118,14 @@ export default class App extends React.Component {
   // For the initial data fetch
   setOwnerId(ownerId) {
     console.log('Set owner ID:', ownerId);
-    this.setState({ownerId});
+    this.setState({ ownerId });
   }
 
   setTitleText(title) {
     console.log('Push title to remote:', title);
-    this.setState({title});
+    this.setState({ title });
     this.setDocumentTitle(title);
-    this.pushToRemote('title:update', {title});
+    this.pushToRemote('title:update', { title });
   }
 
   /* ----------  Users  ---------- */
@@ -133,13 +133,14 @@ export default class App extends React.Component {
   // Socket Event Handler for Set Online Users event.
   setOnlineUsers(onlineUserFbIds = []) {
     const users = this.state.users.map((user) => {
-      const isOnline =
-        onlineUserFbIds.find((onlineUserFbId) => onlineUserFbId === user.fbId);
+      const isOnline = onlineUserFbIds.find(
+        (onlineUserFbId) => onlineUserFbId === user.fbId
+      );
 
-      return Object.assign({}, user, {online: isOnline});
+      return Object.assign({}, user, { online: isOnline });
     });
 
-    this.setState({users});
+    this.setState({ users });
   }
 
   // Socket Event Handler for User Join event.
@@ -149,59 +150,93 @@ export default class App extends React.Component {
 
     let users;
     if (existing) {
-      users = oldUsers.map((user) =>
-        (user.fbId === newUser.fbId)
-        ? newUser
-        : user
+      users = oldUsers.map(
+        (user) => (user.fbId === newUser.fbId ? newUser : user)
       );
     } else {
       oldUsers.push(newUser);
       users = oldUsers;
     }
 
-    this.setState({users});
+    this.setState({ users });
   }
 
   /* ----------  currencies  ---------- */
 
   addCurrency(currency) {
-    this.setState({currencies: [...this.state.currencies, currency]});
+    this.setState({ currencies: [...this.state.currencies, currency] });
   }
 
-  pushUpdatedCurrency(currencyId, name, ticker, value, valueCurrency, completerFbId) {
-    this.pushToRemote('currency:update', {id: currencyId, name, ticker, value, valueCurrency, completerFbId});
+  pushUpdatedCurrency(
+    currencyId,
+    name,
+    ticker,
+    value,
+    valueCurrency,
+    completerFbId
+  ) {
+    this.pushToRemote('currency:update', {
+      id: currencyId,
+      name,
+      ticker,
+      value,
+      valueCurrency,
+      completerFbId,
+    });
   }
 
-  setCurrency({id, name, ticker, value, valueCurrency, completerFbId}) {
-    const currencies = this.state.currencies.map((currency) =>
-      (currency.id === id)
-        ? Object.assign({}, currency, {id: id, name, ticker, value, valueCurrency, completerFbId})
-        : currency
+  setCurrency({ id, name, ticker, value, valueCurrency, completerFbId }) {
+    const currencies = this.state.currencies.map(
+      (currency) =>
+        (currency.id === id
+          ? Object.assign({}, currency, {
+              id: id,
+              name,
+              ticker,
+              value,
+              valueCurrency,
+              completerFbId,
+            })
+          : currency)
     );
 
-    this.setState({currencies});
+    this.setState({ currencies });
   }
 
   /* ----------  New Currency Field  ---------- */
 
-  setNewCurrencyText(newText) {
-    console.log('Set new currency text:', newText);
-    this.setState({newCurrencyText: newText});
+  setNewCurrencyTicker(newTicker) {
+    console.log('Set new currency ticker:', newTicker);
+    this.setState({ newCurrencyTicker: newTicker });
+  }
+  setNewCurrencyValue(newValue) {
+    console.log('Set new currency value:', newValue);
+    this.setState({ newCurrencyValue: newValue });
   }
 
   // Turn new currency text into an actual portfolio currency
   addNewCurrency() {
-    const {newCurrencyText: name} = this.state;
+    let name = null;
+    let valueCurrency = null;
+
+    const { newCurrencyTicker: ticker, newCurrencyValue: value } = this.state;
+
+    if (name === null) {
+      name = '';
+    }
+    if (valueCurrency === null) {
+      valueCurrency = '';
+    }
 
     this.resetNewCurrency();
-    this.pushToRemote('currency:add', {name, ticker, value, valueCurrency});
+    this.pushToRemote('currency:add', { name, ticker, value, valueCurrency });
   }
 
   resetNewCurrency() {
-    this.setState({resetting: true});
+    this.setState({ resetting: true });
 
     setTimeout(() => {
-      this.setState({newCurrencyText: '', resetting: false});
+      this.setState({ newCurrencyText: '', resetting: false });
     }, 600);
   }
 
@@ -211,14 +246,14 @@ export default class App extends React.Component {
 
   componentWillMount() {
     // Connect to socket.
-    socket = io.connect(
-      this.props.socketAddress,
-      {reconnect: true, secure: true}
-    );
+    socket = io.connect(this.props.socketAddress, {
+      reconnect: true,
+      secure: true,
+    });
 
     // Add socket event handlers.
-    socket.on('init', ({users, currencies, ownerId, title} = {}) => {
-      this.setState({users, currencies, ownerId, title});
+    socket.on('init', ({ users, currencies, ownerId, title } = {}) => {
+      this.setState({ users, currencies, ownerId, title });
     });
 
     socket.on('currency:add', this.addCurrency);
@@ -228,30 +263,37 @@ export default class App extends React.Component {
     socket.on('user:join', this.userJoin);
     socket.on('users:setOnline', this.setOnlineUsers);
 
-    var self = this;
+    const self = this;
     // Check for permission, ask if there is none
-    window.MessengerExtensions.getGrantedPermissions(function(response) {
-      // check if permission exists
-      var permissions = response.permissions;
-      if (permissions.indexOf('user_profile') > -1) {
-        self.pushToRemote('user:join', {id: self.props.viewerId});
-      } else {
-        window.MessengerExtensions.askPermission(function(response) {
-          var isGranted = response.isGranted;
-          if (isGranted) {
-            self.pushToRemote('user:join', {id: self.props.viewerId});
-          } else {
-            window.MessengerExtensions.requestCloseBrowser(null, null);
-          }
-        }, function(errorCode, errorMessage) {
-          console.error({errorCode, errorMessage});
-          window.MessengerExtensions.requestCloseBrowser(null, null);
-        }, 'user_profile');
+    window.MessengerExtensions.getGrantedPermissions(
+      function(response) {
+        // check if permission exists
+        const permissions = response.permissions;
+        if (permissions.indexOf('user_profile') > -1) {
+          self.pushToRemote('user:join', { id: self.props.viewerId });
+        } else {
+          window.MessengerExtensions.askPermission(
+            function(response) {
+              const isGranted = response.isGranted;
+              if (isGranted) {
+                self.pushToRemote('user:join', { id: self.props.viewerId });
+              } else {
+                window.MessengerExtensions.requestCloseBrowser(null, null);
+              }
+            },
+            function(errorCode, errorMessage) {
+              console.error({ errorCode, errorMessage });
+              window.MessengerExtensions.requestCloseBrowser(null, null);
+            },
+            'user_profile'
+          );
+        }
+      },
+      function(errorCode, errorMessage) {
+        console.error({ errorCode, errorMessage });
+        window.MessengerExtensions.requestCloseBrowser(null, null);
       }
-    }, function(errorCode, errorMessage) {
-      console.error({errorCode, errorMessage});
-      window.MessengerExtensions.requestCloseBrowser(null, null);
-    });
+    );
   }
 
   render() {
@@ -272,7 +314,7 @@ export default class App extends React.Component {
     if (users.length > 0) {
       /* ----------  Setup Sections (anything dynamic or repeated) ---------- */
 
-      const {apiUri, portfolioId, viewerId, threadType} = this.props;
+      const { apiUri, portfolioId, viewerId, threadType } = this.props;
       const currencyList = currencies.filter(Boolean).map((currency) => {
         return (
           <Currency
@@ -314,21 +356,13 @@ export default class App extends React.Component {
 
       let titleField;
       if (isOwner) {
-        titleField = (
-          <Title
-            text={title}
-            setTitleText={this.setTitleText}
-          />
-        );
+        titleField = <Title text={title} setTitleText={this.setTitleText} />;
       }
 
-    /* ----------  Inner Structure  ---------- */
-      page =
-        (<section id='portfolio'>
-          <Viewers
-            users={users}
-            viewerId={viewerId}
-          />
+      /* ----------  Inner Structure  ---------- */
+      page = (
+        <section id='portfolio'>
+          <Viewers users={users} viewerId={viewerId} />
 
           <Panel>
             {titleField}
@@ -349,7 +383,7 @@ export default class App extends React.Component {
                 disabled={updating}
                 resetting={resetting}
                 addNewCurrency={this.addNewCurrency}
-                setNewCurrencyText={this.setNewCurrencyText}
+                setNewCurrencyText={this.setNewCurrencyTicker}
               />
             </section>
           </Panel>
@@ -357,10 +391,11 @@ export default class App extends React.Component {
           <Updating updating={updating} />
 
           {invite}
-        </section>);
+        </section>
+      );
     } else if (socketStatus === 'noPortfolio') {
       // We were unable to find a matching portfolio in our system.
-      page = <PortfolioNotFound/>;
+      page = <PortfolioNotFound />;
     } else {
       // Show a loading screen until app is ready
       page = <LoadingScreen key='load' />;
